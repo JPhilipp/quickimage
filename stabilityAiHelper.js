@@ -12,7 +12,7 @@ export let apiKey = process.env.STABILITY_API_KEY;
 const statusComplete = 200;
 const statusStillRunning = 202;
 
-export async function saveImage({prompt = '', path = '', doRemoveBackground = false, doRemoveBackgroundInAddition = false, aspectRatio = '1:1', contextForErrorLogging = "Stability ImageToText"} = {}) {
+export async function saveImage({prompt = '', path = '', doRemoveBackground = false, doRemoveBackgroundInAddition = false, aspectRatio = '1:1', contextForErrorLogging = "Stability TextToImage"} = {}) {
   // API Reference: https://platform.stability.ai/docs/api-reference#tag/Generate/paths/~1v2beta~1stable-image~1generate~1sd3/post
 
   let success = false;
@@ -51,8 +51,10 @@ export async function saveImage({prompt = '', path = '', doRemoveBackground = fa
         fs.writeFileSync(path, imageBuffer);
 
         if (doRemoveBackground || doRemoveBackgroundInAddition) {
-          const removedBackgroundPath = doRemoveBackgroundInAddition ?
+          let removedBackgroundPath = doRemoveBackgroundInAddition ?
             path.replace('.png', '-background-removed.png') : path;
+          // removedBackgroundPath = 'file:///' + removedBackgroundPath.replace(/\\/g, '/');
+
           let removeBackgroundConfig = {
             debug: false,
             output: {
@@ -60,6 +62,8 @@ export async function saveImage({prompt = '', path = '', doRemoveBackground = fa
               quality: 1.0
             }
           };
+          console.log('Main path is:', path);
+          console.log('Now saving background removed to:', removedBackgroundPath);
           const blob = await removeBackground(path, removeBackgroundConfig);
           const newImageBuffer = Buffer.from(await blob.arrayBuffer());
           fs.writeFileSync(removedBackgroundPath, newImageBuffer);
@@ -80,7 +84,7 @@ export async function saveImage({prompt = '', path = '', doRemoveBackground = fa
   return success;
 }
 
-export async function saveImageCore({prompt = '', path = '', style = '', doRemoveBackground = false, contextForErrorLogging = "StabilityCore ImageToText"} = {}) {
+export async function saveImageCore({prompt = '', path = '', style = '', doRemoveBackground = false, contextForErrorLogging = "StabilityCore TextToImage"} = {}) {
   // API Reference: https://platform.stability.ai/docs/api-reference#tag/Generate/paths/~1v2beta~1stable-image~1generate~1core/post
 
   let success = false;

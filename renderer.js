@@ -1,5 +1,3 @@
-// import { path } from './node_modules/path/path.js';
-// import { fileURLToPath } from './node_modules/url/url.js';
 import { toFileName, escapeHTML } from './common-libraries/strings.js';
 import { ObjectId } from './node_modules/bson/lib/bson.mjs';
 
@@ -84,16 +82,11 @@ function showImage(data) {
   const result = getCreateResultElement(data.id);
   result.classList.remove('spinner');
   
-  // const __filename = fileURLToPath(import.meta.url);
-  // const __dirname = path.dirname(__filename);
-
-  // const imagePath = path.join(__dirname, `./images/${data.id}.png`);
-  // const imagePathWithoutBackground = imagePath.replace('.png', '-background-removed.png');
-  
-  const imagePath = `images/${toFileName(data.id)}.png`;
+  const imagePath = data.imagePath;
   const imagePathWithoutBackground = imagePath.replace('.png', '-background-removed.png');
 
   const image = document.createElement('img');
+  image.classList.add('result-image');
   image.src = imagePath;
   result.appendChild(image);
 

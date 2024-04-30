@@ -12,15 +12,17 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const imageFolder = 'images';
+const userDataPath = '.'; // Causes issues with imgly: app.getPath('userData');
+const imagesPath = path.join(userDataPath, 'images');
+
 let mainWindow;
 
 setup();
 
 async function generateImage(data) {
-  createFolderIfNeeded(imageFolder);
-  const imagePath = `${imageFolder}/${data.id}.png`;
-  const jsonPath  = `${imageFolder}/${data.id}.json`;
+  const imagePath = path.join(imagesPath, `${data.id}.png`);
+  const jsonPath  = path.join(imagesPath, `${data.id}.json`);
+  data.imagePath = imagePath;
 
   const imageInfo = {
     model: data.model,
@@ -84,19 +86,19 @@ async function search(data) {
 }
 
 async function getSearchMatchingJsons(query) {
-  const directoryPath = path.join(__dirname, imageFolder);
   query = query.toLowerCase();
 
-  const files = await fs.promises.readdir(directoryPath);
+  const files = await fs.promises.readdir(imagesPath);
   const jsonFiles = files.filter(file => file.endsWith('.json'));
 
   const results = await Promise.all(jsonFiles.map(async (file) => {
-    const filePath = path.join(directoryPath, file);
+    const filePath = path.join(imagesPath, file);
     const fileContents = await fs.promises.readFile(filePath, 'utf-8');
     const json = JSON.parse(fileContents);
     
     if (json.prompt && json.prompt.toLowerCase().includes(query)) {
       json.id = path.basename(file, '.json');
+      json.imagePath = path.join(imagesPath, `${json.id}.png`);
       return json;
     }
   }));
@@ -105,7 +107,6 @@ async function getSearchMatchingJsons(query) {
 }
 
 async function requestApiKeysStatus() {
-  console.log('requestApiKeysStatus');
   const data = {
     "dall-e-3": {exists: Boolean(process.env.OPENAI_API_KEY), name: "OPENAI_API_KEY"},
     "stabilitydiffusion-3": {exists: Boolean(process.env.STABILITY_API_KEY), name: "STABILITY_API_KEY"}
@@ -116,6 +117,8 @@ async function requestApiKeysStatus() {
 async function setup() {
   console.clear();
   console.log(`-- Starting QuickImage --`);
+
+  createFolderIfNeeded(imagesPath);
 
   await app.whenReady();
 

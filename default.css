@@ -160,3 +160,7 @@ body {
   color: red;
   font-weight: bold;
 }
+
+.result-image {
+  background-image: url('checkerboard.png');
+}

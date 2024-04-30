@@ -165,8 +165,9 @@ export async function saveImage({prompt = '', path = '', style = 'vivid', qualit
       });
 
       if (doRemoveBackground || doRemoveBackgroundInAddition) {
-        const removedBackgroundPath = doRemoveBackgroundInAddition ?
+        let removedBackgroundPath = doRemoveBackgroundInAddition ?
           path.replace('.png', '-background-removed.png') : path;
+        // removedBackgroundPath = 'file:///' + removedBackgroundPath.replace(/\\/g, '/');
         let removeBackgroundConfig = {
           debug: false,
           output: {
