@@ -12,16 +12,12 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const userDataPath = '.'; // Causes issues with imgly: app.getPath('userData');
-const imagesPath = path.join(userDataPath, 'images');
-
 let mainWindow;
 
 setup();
 
 async function generateImage(data) {
-  const imagePath = path.join(imagesPath, `${data.id}.png`);
-  const jsonPath  = path.join(imagesPath, `${data.id}.json`);
+  const imagePath = `${getImagesPath()}/${data.id}.png`;
   data.imagePath = imagePath;
 
   const imageInfo = {
@@ -65,6 +61,7 @@ async function generateImage(data) {
   }
 
   if (fs.existsSync(imagePath)) {
+    const jsonPath = imagePath.replace('.png', '.json');
     fs.writeFileSync(jsonPath, JSON.stringify(imageInfo, null, 2));
   
     sendToRenderer('showImage', data);
@@ -88,22 +85,27 @@ async function search(data) {
 async function getSearchMatchingJsons(query) {
   query = query.toLowerCase();
 
+  const imagesPath = getImagesPath();
   const files = await fs.promises.readdir(imagesPath);
   const jsonFiles = files.filter(file => file.endsWith('.json'));
 
   const results = await Promise.all(jsonFiles.map(async (file) => {
-    const filePath = path.join(imagesPath, file);
+    const filePath = `${imagesPath}/${file}`;
     const fileContents = await fs.promises.readFile(filePath, 'utf-8');
     const json = JSON.parse(fileContents);
     
     if (json.prompt && json.prompt.toLowerCase().includes(query)) {
       json.id = path.basename(file, '.json');
-      json.imagePath = path.join(imagesPath, `${json.id}.png`);
+      json.imagePath = `${getImagesPath()}/${json.id}.png`;;
       return json;
     }
   }));
 
   return results.filter(Boolean);
+}
+
+function getImagesPath() {
+  return app.isPackaged ? `${process.resourcesPath}/../images` : 'images';
 }
 
 async function requestApiKeysStatus() {
@@ -116,7 +118,7 @@ async function requestApiKeysStatus() {
   // xxx
   const pathsData = {
     userDataPath: app.getPath('userData'),
-    imagesPath: path.join(userDataPath, 'images'),
+    imagesPath: getImagesPath(),
     resourcesPath: process.resourcesPath,
     tempPath: app.getPath('temp')
   };
@@ -127,7 +129,7 @@ async function setup() {
   console.clear();
   console.log(`-- Starting QuickImage --`);
 
-  createFolderIfNeeded(imagesPath);
+  createFolderIfNeeded(getImagesPath());
 
   await app.whenReady();
 
