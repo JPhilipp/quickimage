@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>QuickImage</title>
+  <link rel="stylesheet" href="default.css">
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self';
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data:;
+    connect-src 'self';
+    font-src 'self';
+    object-src 'none';
+  ">
+</head>
+<body>
+
+  <div class="content">
+
+    <div class="prompt-container">
+      <textarea id="prompt">a pink unicorn</textarea>
+
+      <div class="model-selector-settings">
+        <div class="model-selector">
+          <select id="model">
+            <option value="stabilitydiffusion-3">Stability Diffusion 3</option>
+            <option value="dall-e-3">Dall-E 3</option>
+          </select>
+        </div>
+        <div class="model-settings">
+          <div id="model-settings-stabilitydiffusion-3">
+            <select id="aspect-ratio">
+              <option value="1:1">⬚ Square</option>
+              <option value="16:9">= 16:9</option>
+              <option value="21:9">= 21:9</option>
+              <option value="2:3">|| 2:3</option>
+              <option value="3:2">= 3:2</option>
+              <option value="4:5">|| 4:5</option>
+              <option value="5:4">= 5:4</option>
+              <option value="9:16">|| 9:16</option>
+              <option value="9:21">|| 9:21</option>
+            </select>
+          </div>
+          <div id="model-settings-dall-e-3">
+            <select id="size">
+              <option value="1024x1024">⬚ Square</option>
+              <option value="1792x1024">= Horizontal</option>
+              <option value="1024x1792">|| Vertical</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="prompt-submit">
+        <button class="prompt-submit-button">➡️</button>
+      </div>
+    </div>
+    
+    <div id="image-results">
+    </div>
+
+  </div>
+
+  <script src="renderer.js" type="module"></script>
+
+</body>
+</html>
