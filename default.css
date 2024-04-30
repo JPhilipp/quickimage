@@ -4,6 +4,7 @@ body {
   color: black;
   font-family: Arial, sans-serif;
   font-size: 120%;
+  overflow-y: scroll;
 }
 
 .content {
@@ -30,6 +31,11 @@ body {
 .prompt-submit {
   margin-top: 20px;
   text-align: center;
+  transition: all 0.05s ease;
+}
+
+.prompt-submit:active {
+  transform: translateY(5px);
 }
 
 #prompt-submit-button {
@@ -55,6 +61,10 @@ body {
 .model-settings {
   flex-grow: 1;
   padding-left: 20px;
+}
+
+.model-settings select {
+  min-width: 120px;
 }
 
 #model-settings-dall-e-3 {
