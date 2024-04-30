@@ -164,3 +164,19 @@ body {
 .result-image {
   background-image: url('checkerboard.png');
 }
+
+@media (max-width: 700px) {
+  .prompt-container {
+    padding-top: 50px;
+    width: 100%;
+  }
+
+  .model-settings select {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  #search {
+    top: 10px;
+  }
+}
