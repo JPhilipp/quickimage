@@ -8,10 +8,14 @@ import { removeBackground } from '@imgly/background-removal-node';
 
 dotenv.config();
 
-const openai = new OpenAI(process.env.OPENAI_API_KEY);
+const openai = process.env.OPENAI_API_KEY ? new OpenAI(process.env.OPENAI_API_KEY) : null;
 export const minutesTemporaryImageUrlIsValid = 60;
 const defaultJsonSystemMessage = "You are a helpful assistant designed to output JSON.";
 const tabReplacement = '  ';
+
+export function loadKey() {
+  openai = new OpenAI(process.env.OPENAI_API_KEY)
+}
 
 export async function getTextJson({prompt = '', contextForErrorLogging = "ChatGPT", model = "gpt-4-turbo"} = {}) {
   // API Reference: https://platform.openai.com/docs/api-reference/chat/create

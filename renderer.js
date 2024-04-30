@@ -1,15 +1,32 @@
 // import { path } from './node_modules/path/path.js';
 // import { fileURLToPath } from './node_modules/url/url.js';
+import { toFileName, escapeHTML } from './common-libraries/strings.js';
 import { ObjectId } from './node_modules/bson/lib/bson.mjs';
 
 document.querySelector('#prompt-submit-button').addEventListener('click', () => { submitPrompt(); });
 document.querySelector('#model').addEventListener('change', (event) => { modelChanged(event); });
-
 document.querySelector('#search').addEventListener('search', () => { search(); });
 
 window.electronAPI.receiveMessage('showImage', (data) => { showImage(data); });
 window.electronAPI.receiveMessage('showNoSearchResultsFound', (data) => { showNoSearchResultsFound(data); });
+window.electronAPI.receiveMessage('getApiKeysStatus', (data) => { getApiKeysStatus(data); });
 
+window.onload = () => { start(); };
+
+function start() {
+  window.electronAPI.sendMessage('requestApiKeysStatus', {});
+}
+
+function getApiKeysStatus(data) {
+  for (const key in data) {
+    const info = data[key];
+    if (!info.exists) {
+      const element = document.getElementById(`info-${key}`);
+      element.classList.add('missing-api-key');
+      element.innerHTML = `Add API Key <code>${escapeHTML(info.name)}=...</code> to <code>.env</code> file`;
+    }
+  }
+}
 
 function submitPrompt() {
   const id = new ObjectId().toString();
@@ -73,7 +90,7 @@ function showImage(data) {
   // const imagePath = path.join(__dirname, `./images/${data.id}.png`);
   // const imagePathWithoutBackground = imagePath.replace('.png', '-background-removed.png');
   
-  const imagePath = `images/${data.id}.png`;
+  const imagePath = `images/${toFileName(data.id)}.png`;
   const imagePathWithoutBackground = imagePath.replace('.png', '-background-removed.png');
 
   const image = document.createElement('img');

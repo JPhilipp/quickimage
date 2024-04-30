@@ -37,7 +37,8 @@ async function generateImage(data) {
   console.log(`Generating ${data.model} image: ${data.prompt}`);
 
   switch (data.model) {
-    case 'dall-e-3': {
+    case 'dall-e-3':
+      if (process.env.OPENAI_API_KEY) {
         const [width, height] = data.widthAndHeight.split('x');
         params.width  = parseInt(width);
         params.height = parseInt(height);
@@ -48,19 +49,24 @@ async function generateImage(data) {
         await ai.saveImage(params);
       }
       break;
-    case 'stabilitydiffusion-3': {
+
+    case 'stabilitydiffusion-3':
+      if (process.env.STABILITY_API_KEY) {
         params.aspectRatio = data.aspectRatio;
         await stabilityAi.saveImage(params);
       }
       break;
+
     default:
       console.log('Invalid generateImage model', data.model);
       return;
   }
 
-  fs.writeFileSync(jsonPath, JSON.stringify(imageInfo, null, 2));
+  if (fs.existsSync(imagePath)) {
+    fs.writeFileSync(jsonPath, JSON.stringify(imageInfo, null, 2));
   
-  sendToRenderer('showImage', data);
+    sendToRenderer('showImage', data);
+  }
 }
 
 async function search(data) {
@@ -96,6 +102,15 @@ async function getSearchMatchingJsons(query) {
   }));
 
   return results.filter(Boolean);
+}
+
+async function requestApiKeysStatus() {
+  console.log('requestApiKeysStatus');
+  const data = {
+    "dall-e-3": {exists: Boolean(process.env.OPENAI_API_KEY), name: "OPENAI_API_KEY"},
+    "stabilitydiffusion-3": {exists: Boolean(process.env.STABILITY_API_KEY), name: "STABILITY_API_KEY"}
+  };
+  sendToRenderer('getApiKeysStatus', data);
 }
 
 async function setup() {
@@ -140,6 +155,7 @@ async function setup() {
 
   ipcMain.on('submitPrompt', (event, data) => { generateImage(data); });
   ipcMain.on('search', (event, data) => { search(data); });
+  ipcMain.on('requestApiKeysStatus', (event, data) => { requestApiKeysStatus(); });
 
   await mainWindow.loadFile('index.html'); 
 

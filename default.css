@@ -152,3 +152,11 @@ body {
   font-style: italic;
   margin-top: 50px;
 }
+
+.missing-api-key {
+  display: block;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  color: red;
+  font-weight: bold;
+}

@@ -7,7 +7,7 @@ import { removeBackground } from '@imgly/background-removal-node';
 import * as pathTools from "path";
 
 dotenv.config();
-const apiKey = process.env.STABILITY_KEY;
+export let apiKey = process.env.STABILITY_API_KEY;
 
 const statusComplete = 200;
 const statusStillRunning = 202;
