@@ -32,7 +32,7 @@ body {
   text-align: center;
 }
 
-.prompt-submit-button {
+#prompt-submit-button {
   font-size: 150%;
   width: 120px;
   border-radius: 5px;
@@ -119,4 +119,26 @@ body {
 .download-button {
   border: 0;
   font-size: 130%;
+}
+
+.navigation {
+  position: absolute;
+  right: 20px;
+  top: 26px;
+  width: 250px;
+  text-align: right;
+}
+
+#search {
+  font-size: 100%;
+  width: 150px;
+}
+
+#no-search-results-found {
+  color: red;
+  text-align: center;
+  font-weight: bold;
+  font-size: 110%;
+  font-style: italic;
+  margin-top: 50px;
 }

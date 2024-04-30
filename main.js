@@ -9,12 +9,15 @@ import { envToBoolean, delay } from './common-libraries/shared.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const imageFolder = 'images';
 let mainWindow;
 
 setup();
 
 async function generateImage(data) {
-  const imageFolder = 'images';
   createFolderIfNeeded(imageFolder);
   const imagePath = `${imageFolder}/${data.id}.png`;
   const jsonPath  = `${imageFolder}/${data.id}.json`;
@@ -60,12 +63,44 @@ async function generateImage(data) {
   sendToRenderer('showImage', data);
 }
 
-async function setup(fullscreen = true) {
+async function search(data) {
+  const jsons = await getSearchMatchingJsons(data.query);
+
+  if (jsons.length >= 1) {
+    const maxResults = 100;
+    for (let i = 0; i < jsons.length && i < maxResults; i++) {
+      sendToRenderer('showImage', jsons[i]);
+    }
+  }
+  else {
+    sendToRenderer('showNoSearchResultsFound');
+  }
+}
+
+async function getSearchMatchingJsons(query) {
+  const directoryPath = path.join(__dirname, imageFolder);
+  query = query.toLowerCase();
+
+  const files = await fs.promises.readdir(directoryPath);
+  const jsonFiles = files.filter(file => file.endsWith('.json'));
+
+  const results = await Promise.all(jsonFiles.map(async (file) => {
+    const filePath = path.join(directoryPath, file);
+    const fileContents = await fs.promises.readFile(filePath, 'utf-8');
+    const json = JSON.parse(fileContents);
+    
+    if (json.prompt && json.prompt.toLowerCase().includes(query)) {
+      json.id = path.basename(file, '.json');
+      return json;
+    }
+  }));
+
+  return results.filter(Boolean);
+}
+
+async function setup() {
   console.clear();
   console.log(`-- Starting QuickImage --`);
-
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
 
   await app.whenReady();
 
@@ -104,6 +139,7 @@ async function setup(fullscreen = true) {
   });
 
   ipcMain.on('submitPrompt', (event, data) => { generateImage(data); });
+  ipcMain.on('search', (event, data) => { search(data); });
 
   await mainWindow.loadFile('index.html'); 
 
