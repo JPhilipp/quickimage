@@ -115,3 +115,8 @@ body {
   display: inline-block;
   margin-right: 20px;
 }
+
+.download-button {
+  border: 0;
+  font-size: 130%;
+}

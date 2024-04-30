@@ -24,9 +24,7 @@ export async function saveImage({prompt = '', path = '', doRemoveBackground = fa
     output_format: format,
     aspect_ratio: aspectRatio
   };
-
-  console.log(formData);
-  
+ 
   let response;
   try {
     response = await axios.postForm(

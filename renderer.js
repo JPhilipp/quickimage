@@ -56,6 +56,7 @@ function showImage(data) {
   result.classList.remove('spinner');
   
   const imagePath = `images/${data.id}.png`;
+  const imagePathWithoutBackground = imagePath.replace('.png', '-background-removed.png');
 
   const image = document.createElement('img');
   image.src = imagePath;
@@ -70,6 +71,36 @@ function showImage(data) {
   model.classList.add('image-model');
   model.innerText = getModelTitle(data.model);
   result.appendChild(model);
+
+  const downloadButton = document.createElement('button');
+  downloadButton.innerText = '💾';
+  downloadButton.classList.add('download-button');
+  result.appendChild(downloadButton);
+  
+  image.addEventListener('click', () => {
+    image.src = image.src.includes('-background-removed.png') ?
+      imagePath : imagePathWithoutBackground;
+  });
+
+  downloadButton.addEventListener('click', () => {
+    downloadImage(image.src, getFileName(image.src));
+  });
+}
+
+function getFileName(imagePath) {
+  const lastSlash = imagePath.lastIndexOf('/');
+  const lastBackslash = imagePath.lastIndexOf('\\');
+  const lastSeparator = Math.max(lastSlash, lastBackslash);
+  return imagePath.substring(lastSeparator + 1);
+}
+
+function downloadImage(imagePath, fileName) {
+  const link = document.createElement('a');
+  link.href = imagePath;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
 function getModelTitle(model) {
