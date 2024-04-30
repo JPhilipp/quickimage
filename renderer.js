@@ -8,6 +8,7 @@ document.querySelector('#search').addEventListener('search', () => { search(); }
 window.electronAPI.receiveMessage('showImage', (data) => { showImage(data); });
 window.electronAPI.receiveMessage('showNoSearchResultsFound', (data) => { showNoSearchResultsFound(data); });
 window.electronAPI.receiveMessage('getApiKeysStatus', (data) => { getApiKeysStatus(data); });
+window.electronAPI.receiveMessage('showDebugInfo', (data) => { showDebugInfo(data); });
 
 window.onload = () => { start(); };
 
@@ -167,4 +168,8 @@ function search() {
 
     window.electronAPI.sendMessage('search', { query: query });
   }
+}
+
+function showDebugInfo(data) {
+  console.log('Debug Info:', data);
 }

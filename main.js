@@ -112,6 +112,15 @@ async function requestApiKeysStatus() {
     "stabilitydiffusion-3": {exists: Boolean(process.env.STABILITY_API_KEY), name: "STABILITY_API_KEY"}
   };
   sendToRenderer('getApiKeysStatus', data);
+
+  // xxx
+  const pathsData = {
+    userDataPath: app.getPath('userData'),
+    imagesPath: path.join(userDataPath, 'images'),
+    resourcesPath: process.resourcesPath,
+    tempPath: app.getPath('temp')
+  };
+  sendToRenderer('showDebugInfo', pathsData);
 }
 
 async function setup() {
