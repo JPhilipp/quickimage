@@ -5,8 +5,7 @@ import { fileURLToPath } from 'url';
 import * as ai from './openAiHelper.js';
 import * as stabilityAi from './stabilityAiHelper.js';
 import { createFolderIfNeeded } from './common-libraries/fileSystem.js';
-import { getFormattedTime, envToBoolean, delay } from './common-libraries/shared.js';
-import { toFileName, shortenString } from './common-libraries/strings.js';
+import { envToBoolean, delay } from './common-libraries/shared.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -15,8 +14,10 @@ let mainWindow;
 setup();
 
 async function generateImage(data) {
-  const imagePath = `images/${data.id}.png`;
-  const jsonPath  = `images/${data.id}.json`;
+  const imageFolder = 'images';
+  createFolderIfNeeded(imageFolder);
+  const imagePath = `${imageFolder}/${data.id}.png`;
+  const jsonPath  = `${imageFolder}/${data.id}.json`;
 
   const imageInfo = {
     model: data.model,

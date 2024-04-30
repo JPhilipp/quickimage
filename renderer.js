@@ -1,3 +1,5 @@
+// import { path } from './node_modules/path/path.js';
+// import { fileURLToPath } from './node_modules/url/url.js';
 import { ObjectId } from './node_modules/bson/lib/bson.mjs';
 
 document.querySelector('.prompt-submit-button').addEventListener('click', () => { submitPrompt(); });
@@ -54,6 +56,12 @@ function showImage(data) {
   if (!result) { return; }
 
   result.classList.remove('spinner');
+  
+  // const __filename = fileURLToPath(import.meta.url);
+  // const __dirname = path.dirname(__filename);
+
+  // const imagePath = path.join(__dirname, `./images/${data.id}.png`);
+  // const imagePathWithoutBackground = imagePath.replace('.png', '-background-removed.png');
   
   const imagePath = `images/${data.id}.png`;
   const imagePathWithoutBackground = imagePath.replace('.png', '-background-removed.png');
