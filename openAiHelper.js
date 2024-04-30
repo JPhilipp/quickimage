@@ -90,7 +90,7 @@ export async function getTextJsonWithImageAnalysis(prompt, base64JpegImage, cont
   }
 }
 
-export async function getImageURL({prompt = '', width = 1024, height = 1024, model = "dall-e-3", contextForErrorLogging = "Dall-E"} = {}) {
+export async function getImageURL({prompt = '', style = 'vivid', quality = 'standard', width = 1024, height = 1024, model = "dall-e-3", contextForErrorLogging = "Dall-E"} = {}) {
   // API Reference: https://platform.openai.com/docs/api-reference/images/create
   
   let imageUrl;
@@ -101,8 +101,8 @@ export async function getImageURL({prompt = '', width = 1024, height = 1024, mod
       model: model,
       prompt: prompt,
       size: `${width}x${height}`,
-      style: "vivid",
-      quality: "standard"
+      style: style,
+      quality: quality
     });
   }
   catch (error) {
@@ -120,7 +120,7 @@ export async function getImageURL({prompt = '', width = 1024, height = 1024, mod
   return imageUrl;
 }
 
-export async function saveImage({prompt = '', path = '', doRemoveBackground = false, doRemoveBackgroundInAddition = false, width = 1024, height = 1024, saveAsJpg = false, saveAsJpgInAddition = false, contextForErrorLogging = "Dall-E", model = "dall-e-3", imageInfo = {revisedPrompt: null, temporaryLiveUrl: null}} = {}) {
+export async function saveImage({prompt = '', path = '', style = 'vivid', quality = 'standard', doRemoveBackground = false, doRemoveBackgroundInAddition = false, width = 1024, height = 1024, saveAsJpg = false, saveAsJpgInAddition = false, contextForErrorLogging = "Dall-E", model = "dall-e-3", imageInfo = {revisedPrompt: null, temporaryLiveUrl: null}} = {}) {
   // API Reference: https://platform.openai.com/docs/api-reference/images/create
   
   let success;
@@ -131,8 +131,8 @@ export async function saveImage({prompt = '', path = '', doRemoveBackground = fa
       model: model,
       prompt: prompt,
       size: `${width}x${height}`,
-      style: "vivid",
-      quality: "standard"
+      style: style,
+      quality: quality
     });
   }
   catch (error) {

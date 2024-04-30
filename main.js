@@ -30,23 +30,24 @@ async function generateImage(data) {
     imageInfo: imageInfo
   };
 
-  if (data.widthAndHeight) {
-    const [width, height] = data.widthAndHeight.split('x');
-    params.width  = parseInt(width);
-    params.height = parseInt(height);
-  }
-  else if (data.aspectRatio) {
-    params.aspectRatio = data.aspectRatio;
-  }
-
   console.log(`Generating ${data.model} image: ${data.prompt}`);
 
   switch (data.model) {
-    case 'dall-e-3':
-      await ai.saveImage(params);
+    case 'dall-e-3': {
+        const [width, height] = data.widthAndHeight.split('x');
+        params.width  = parseInt(width);
+        params.height = parseInt(height);
+        params.style = data.style;
+        params.quality = data.quality;
+        imageInfo.style = data.style;
+        imageInfo.quality = data.quality;
+        await ai.saveImage(params);
+      }
       break;
-    case 'stabilitydiffusion-3':
-      await stabilityAi.saveImage(params);
+    case 'stabilitydiffusion-3': {
+        params.aspectRatio = data.aspectRatio;
+        await stabilityAi.saveImage(params);
+      }
       break;
     default:
       console.log('Invalid generateImage model', data.model);

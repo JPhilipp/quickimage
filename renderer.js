@@ -27,6 +27,8 @@ function submitPrompt() {
     case 'dall-e-3':
       const widthAndHeight = document.querySelector('#size').value;
       data.widthAndHeight = widthAndHeight;
+      data.style = document.querySelector('#style').value;
+      data.quality = document.querySelector('#quality').value;
       break;
     case 'stabilitydiffusion-3':
       data.aspectRatio = document.querySelector('#aspect-ratio').value;

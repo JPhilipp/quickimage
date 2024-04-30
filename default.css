@@ -110,3 +110,8 @@ body {
   opacity: 0.3;
   font-weight: bold;
 }
+
+.model-settings select {
+  display: inline-block;
+  margin-right: 20px;
+}
