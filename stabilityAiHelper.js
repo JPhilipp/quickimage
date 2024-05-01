@@ -53,7 +53,6 @@ export async function saveImage({prompt = '', path = '', doRemoveBackground = fa
         if (doRemoveBackground || doRemoveBackgroundInAddition) {
           let removedBackgroundPath = doRemoveBackgroundInAddition ?
             path.replace('.png', '-background-removed.png') : path;
-          // removedBackgroundPath = 'file:///' + removedBackgroundPath.replace(/\\/g, '/');
 
           let removeBackgroundConfig = {
             debug: false,
@@ -62,10 +61,10 @@ export async function saveImage({prompt = '', path = '', doRemoveBackground = fa
               quality: 1.0
             }
           };
-          console.log('Main path is:', path);
-          console.log('Now saving background removed to:', removedBackgroundPath);
-          const blob = await removeBackground(path, removeBackgroundConfig);
-          const newImageBuffer = Buffer.from(await blob.arrayBuffer());
+
+          const blob = new Blob([imageBuffer], { type: "image/png" });
+          const removedBackgroundBlob = await removeBackground(blob, removeBackgroundConfig);
+          const newImageBuffer = Buffer.from(await removedBackgroundBlob.arrayBuffer());
           fs.writeFileSync(removedBackgroundPath, newImageBuffer);
         }
 
@@ -84,7 +83,7 @@ export async function saveImage({prompt = '', path = '', doRemoveBackground = fa
   return success;
 }
 
-export async function saveImageCore({prompt = '', path = '', style = '', doRemoveBackground = false, contextForErrorLogging = "StabilityCore TextToImage"} = {}) {
+export async function saveImageCore({prompt = '', path = '', style = '', contextForErrorLogging = "StabilityCore TextToImage"} = {}) {
   // API Reference: https://platform.stability.ai/docs/api-reference#tag/Generate/paths/~1v2beta~1stable-image~1generate~1core/post
 
   let success = false;
@@ -125,14 +124,7 @@ export async function saveImageCore({prompt = '', path = '', style = '', doRemov
         let imageBuffer = Buffer.from(response.data);
         fs.writeFileSync(path, imageBuffer);
 
-        if (doRemoveBackground) {
-          const blob = await removeBackground(path);
-          const newImageBuffer = Buffer.from(await blob.arrayBuffer());
-          fs.writeFileSync(path, newImageBuffer);
-        }
-
         success = true;
-
       }
       else {
         console.log(`${contextForErrorLogging} issue, ${response.status}: ${response.data.toString()}`);

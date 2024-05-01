@@ -167,7 +167,6 @@ export async function saveImage({prompt = '', path = '', style = 'vivid', qualit
       if (doRemoveBackground || doRemoveBackgroundInAddition) {
         let removedBackgroundPath = doRemoveBackgroundInAddition ?
           path.replace('.png', '-background-removed.png') : path;
-        // removedBackgroundPath = 'file:///' + removedBackgroundPath.replace(/\\/g, '/');
         let removeBackgroundConfig = {
           debug: false,
           output: {
@@ -175,8 +174,11 @@ export async function saveImage({prompt = '', path = '', style = 'vivid', qualit
             quality: 1.0
           }
         };
-        const blob = await removeBackground(path, removeBackgroundConfig);
-        const buffer = Buffer.from(await blob.arrayBuffer());
+
+        const imageBuffer = fs.readFileSync(path);
+        const blob = new Blob([imageBuffer], { type: "image/png" });
+        const removedBackgroundBlob = await removeBackground(blob, removeBackgroundConfig);
+        const buffer = Buffer.from(await removedBackgroundBlob.arrayBuffer());
         fs.writeFileSync(removedBackgroundPath, buffer);
       }
     }
