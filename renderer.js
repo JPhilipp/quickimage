@@ -14,6 +14,7 @@ window.onload = () => { start(); };
 
 function start() {
   window.electronAPI.sendMessage('requestApiKeysStatus', {});
+  window.electronAPI.sendMessage('requestNewestImages', {});
 }
 
 function getApiKeysStatus(data) {

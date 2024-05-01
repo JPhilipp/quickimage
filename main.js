@@ -68,6 +68,15 @@ async function generateImage(data) {
   }
 }
 
+async function rendererRequestsNewestImages() {
+  const max = 10;
+  const jsons = await getNewestJsons(max);
+
+  for (let i = 0; i < jsons.length; i++) {
+    sendToRenderer('showImage', jsons[i]);
+  }
+}
+
 async function search(data) {
   const jsons = await getSearchMatchingJsons(data.query);
 
@@ -80,6 +89,26 @@ async function search(data) {
   else {
     sendToRenderer('showNoSearchResultsFound');
   }
+}
+
+async function getNewestJsons(max) {
+  const imagesPath = getImagesPath();
+  const files = await fs.promises.readdir(imagesPath);
+  const jsonFiles = files.filter(file => file.endsWith('.json')).sort().reverse();
+  let limitedFiles = jsonFiles.slice(0, max);
+  limitedFiles = limitedFiles.reverse();
+  
+  const results = await Promise.all(limitedFiles.map(async (file) => {
+    const filePath = `${imagesPath}/${file}`;
+    const fileContents = await fs.promises.readFile(filePath, 'utf-8');
+    const json = JSON.parse(fileContents);
+    
+    json.id = path.basename(file, '.json');
+    json.imagePath = `${getImagesPath()}/${json.id}.png`;;
+    return json;
+  }));
+
+  return results.filter(Boolean);
 }
 
 async function getSearchMatchingJsons(query) {
@@ -108,7 +137,7 @@ function getImagesPath() {
   return app.isPackaged ? `${process.resourcesPath}/../images` : 'images';
 }
 
-async function requestApiKeysStatus() {
+async function rendererRequestsApiKeysStatus() {
   const data = {
     "dall-e-3": {exists: Boolean(process.env.OPENAI_API_KEY), name: "OPENAI_API_KEY"},
     "stabilitydiffusion-3": {exists: Boolean(process.env.STABILITY_API_KEY), name: "STABILITY_API_KEY"}
@@ -170,8 +199,9 @@ async function setup() {
 
   ipcMain.on('submitPrompt', (event, data) => { generateImage(data); });
   ipcMain.on('search', (event, data) => { search(data); });
-  ipcMain.on('requestApiKeysStatus', (event, data) => { requestApiKeysStatus(); });
-
+  ipcMain.on('requestApiKeysStatus', (event, data) => { rendererRequestsApiKeysStatus(); });
+  ipcMain.on('requestNewestImages', (event, data) => { rendererRequestsNewestImages(); });
+  
   await mainWindow.loadFile('index.html'); 
 
   // mainWindow.on('close', () => { app.quit(); });
