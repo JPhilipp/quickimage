@@ -115,12 +115,13 @@ async function requestApiKeysStatus() {
   };
   sendToRenderer('getApiKeysStatus', data);
 
-  // xxx
   const pathsData = {
     userDataPath: app.getPath('userData'),
     imagesPath: getImagesPath(),
     resourcesPath: process.resourcesPath,
-    tempPath: app.getPath('temp')
+    tempPath: app.getPath('temp'),
+    filename: __filename,
+    dirname: __dirname
   };
   sendToRenderer('showDebugInfo', pathsData);
 }
