@@ -13,6 +13,8 @@ window.electronAPI.receiveMessage('showDebugInfo', (data) => { showDebugInfo(dat
 window.onload = () => { start(); };
 
 function start() {
+  addKeyListeners();
+
   window.electronAPI.sendMessage('requestApiKeysStatus', {});
   window.electronAPI.sendMessage('requestNewestImages', {});
 }
@@ -173,4 +175,13 @@ function search() {
 
 function showDebugInfo(data) {
   console.log('Debug Info:', data);
+}
+
+function addKeyListeners() {
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      window.scrollTo(0, 0);
+      document.getElementById('prompt').focus();
+    }
+  });
 }
