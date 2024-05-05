@@ -69,7 +69,7 @@ async function generateImage(data) {
 }
 
 async function rendererRequestsNewestImages() {
-  const max = 10;
+  const max = 50;
   const jsons = await getNewestJsons(max);
 
   for (let i = 0; i < jsons.length; i++) {
