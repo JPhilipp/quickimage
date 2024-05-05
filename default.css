@@ -163,6 +163,10 @@ body {
   font-weight: bold;
 }
 
+.missing-api-key a {
+  color: red;
+}
+
 .result-image {
   background-image: url('checkerboard.png');
 }

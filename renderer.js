@@ -27,7 +27,11 @@ function getApiKeysStatus(data) {
     if (!info.exists) {
       const element = document.getElementById(`info-${key}`);
       element.classList.add('missing-api-key');
-      element.innerHTML = `Add API Key <code>${escapeHTML(info.name)}=...</code> to <code>.env</code> file and restart.`;
+      element.innerHTML = `
+        Add <a href="${escapeHTML(info.url)}" target="_blank">API Key</a>
+        <code>${escapeHTML(info.name)}=...</code>
+        to <code>.env</code> file and restart.
+      `;
     }
   }
 }

@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -139,8 +139,16 @@ function getImagesPath() {
 
 async function rendererRequestsApiKeysStatus() {
   const data = {
-    "dall-e-3": {exists: Boolean(process.env.OPENAI_API_KEY), name: "OPENAI_API_KEY"},
-    "stabilitydiffusion-3": {exists: Boolean(process.env.STABILITY_API_KEY), name: "STABILITY_API_KEY"}
+    "stabilitydiffusion-3": {
+      exists: Boolean(process.env.STABILITY_API_KEY),
+      name: "STABILITY_API_KEY",
+      url: 'https://platform.openai.com/api-keys'
+    },
+    "dall-e-3": {
+      exists: Boolean(process.env.OPENAI_API_KEY),
+      name: "OPENAI_API_KEY",
+      url: 'https://platform.stability.ai/account/keys'
+    }
   };
   sendToRenderer('getApiKeysStatus', data);
 
@@ -180,6 +188,11 @@ async function setup() {
 
   mainWindow.setMenu(null);
   mainWindow.maximize();
+
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: 'deny' };
+  });
 
   mainWindow.once('ready-to-show', async () => {
     if (envToBoolean(process.env.SHOW_DEV_TOOLS)) {
