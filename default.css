@@ -29,13 +29,8 @@ body {
 }
 
 .prompt-submit {
-  margin-top: 20px;
   text-align: center;
-  transition: all 0.05s ease;
-}
-
-.prompt-submit:active {
-  transform: translateY(5px);
+  margin-top: 20px;
 }
 
 #prompt-submit-button {
@@ -46,6 +41,13 @@ body {
   border-bottom: 1px solid #aaa;
   height: 50px;
   background-color: white;
+  padding-top: 0;
+  padding-bottom: 6px;
+  transition: all 0.05s ease;
+}
+
+#prompt-submit-button:active {
+  transform: translateY(5px);
 }
 
 .model-selector-settings {
@@ -179,4 +181,13 @@ body {
   #search {
     top: 10px;
   }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(2deg); }
+  50% { transform: rotate(-2deg); }
+}
+
+.wiggle-animation {
+  animation: wiggle 1s ease-in-out infinite;
 }

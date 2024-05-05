@@ -144,6 +144,10 @@ async function rendererRequestsApiKeysStatus() {
   };
   sendToRenderer('getApiKeysStatus', data);
 
+  // sendPathsDebugInfo();
+}
+
+function sendPathsDebugInfo() {
   const pathsData = {
     userDataPath: app.getPath('userData'),
     imagesPath: getImagesPath(),

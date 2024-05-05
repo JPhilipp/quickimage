@@ -11,6 +11,7 @@ window.electronAPI.receiveMessage('getApiKeysStatus', (data) => { getApiKeysStat
 window.electronAPI.receiveMessage('showDebugInfo', (data) => { showDebugInfo(data); });
 
 window.onload = () => { start(); };
+let apiKeysStatus = {};
 
 function start() {
   addKeyListeners();
@@ -20,26 +21,36 @@ function start() {
 }
 
 function getApiKeysStatus(data) {
+  apiKeysStatus = data;
   for (const key in data) {
     const info = data[key];
     if (!info.exists) {
       const element = document.getElementById(`info-${key}`);
       element.classList.add('missing-api-key');
-      element.innerHTML = `Add API Key <code>${escapeHTML(info.name)}=...</code> to <code>.env</code> file`;
+      element.innerHTML = `Add API Key <code>${escapeHTML(info.name)}=...</code> to <code>.env</code> file and restart.`;
     }
   }
 }
 
 function submitPrompt() {
+  const model = document.querySelector('#model').value;
+  if (!apiKeysStatus[model]?.exists) {
+    const element = document.getElementById(`info-${model}`);
+    element?.classList.add('wiggle-animation');
+    return;
+  }
+
   const id = new ObjectId().toString();
   const result = getCreateResultElement(id);
   result.classList.add('spinner');
 
-  const data = {
-    id: id,
-    prompt: document.querySelector('#prompt').value,
-    model: document.querySelector('#model').value
-  };
+  let prompt = document.querySelector('#prompt').value.trim();
+  if (!prompt) {
+    prompt = 'a pink unicorn';
+    document.querySelector('#prompt').value = prompt;
+  }
+
+  const data = { id: id, prompt: prompt, model: model };
 
   switch (data.model) {
     case 'dall-e-3':
