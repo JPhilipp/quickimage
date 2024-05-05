@@ -3,6 +3,8 @@ QuickImage lets you generate AI images using Stable Diffusion 3 and Dall-E 3. Yo
     STABILITY_API_KEY=...
     OPENAI_API_KEY=...
 
+To grab the Windows exe, click on Releases and download the zip.
+
 ![image](https://github.com/JPhilipp/quickimage/assets/1754503/3a8e4843-4811-422b-8444-b0457732a447)
 
 ![image](https://github.com/JPhilipp/quickimage/assets/1754503/5d20992e-cacf-4ea2-9696-1fd65142c125)
