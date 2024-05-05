@@ -71,6 +71,7 @@ async function generateImage(data) {
     const jsonPath = imagePath.replace('.png', '.json');
     fs.writeFileSync(jsonPath, JSON.stringify(imageInfo, null, 2));
     data.backgroundRemovalSupported = backgroundRemovalSupported;
+    console.log('data.backgroundRemovalSupported', data.backgroundRemovalSupported);
     sendToRenderer('showImage', data);
   }
 }
@@ -113,6 +114,7 @@ async function getNewestJsons(max) {
     json.id = path.basename(file, '.json');
     json.imagePath = `${getImagesPath()}/${json.id}.png`;
     if (!fs.existsSync(json.imagePath)) { return; }
+    json.backgroundRemovalSupported = isDevEnvironment;
 
     return json;
   }));
@@ -134,7 +136,9 @@ async function getSearchMatchingJsons(query) {
     
     if (json.prompt && json.prompt.toLowerCase().includes(query)) {
       json.id = path.basename(file, '.json');
-      json.imagePath = `${getImagesPath()}/${json.id}.png`;;
+      json.imagePath = `${getImagesPath()}/${json.id}.png`;
+      if (!fs.existsSync(json.imagePath)) { return; }
+      json.backgroundRemovalSupported = isDevEnvironment;
       return json;
     }
   }));
@@ -178,7 +182,7 @@ function sendPathsDebugInfo() {
 
 async function setup() {
   console.clear();
-  console.log(`-- Starting QuickImage --`);
+  console.log(`-- Starting QuickImage (isDevEnvironment: ${isDevEnvironment}) --`);
 
   createFolderIfNeeded(getImagesPath());
 
