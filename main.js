@@ -6,6 +6,7 @@ import * as ai from './openAiHelper.js';
 import * as stabilityAi from './stabilityAiHelper.js';
 import { createFolderIfNeeded } from './common-libraries/fileSystem.js';
 import { envToBoolean, delay } from './common-libraries/shared.js';
+import isDevEnvironment from 'electron-is-dev';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -26,10 +27,12 @@ async function generateImage(data) {
     error: null
   };
 
+  const backgroundRemovalSupported = isDevEnvironment;
+
   let params = {
     prompt: data.prompt,
     path: imagePath,
-    doRemoveBackgroundInAddition: true,
+    doRemoveBackgroundInAddition: backgroundRemovalSupported,
     imageInfo: imageInfo
   };
 
@@ -67,6 +70,7 @@ async function generateImage(data) {
   else {
     const jsonPath = imagePath.replace('.png', '.json');
     fs.writeFileSync(jsonPath, JSON.stringify(imageInfo, null, 2));
+    data.backgroundRemovalSupported = backgroundRemovalSupported;
     sendToRenderer('showImage', data);
   }
 }

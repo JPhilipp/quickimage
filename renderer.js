@@ -123,10 +123,12 @@ function showImage(data) {
   downloadButton.classList.add('download-button');
   result.appendChild(downloadButton);
   
-  image.addEventListener('click', () => {
-    image.src = image.src.includes('-background-removed.png') ?
-      imagePath : imagePathWithoutBackground;
-  });
+  if (data.backgroundRemovalSupported) {
+    image.addEventListener('click', () => {
+      image.src = image.src.includes('-background-removed.png') ?
+        imagePath : imagePathWithoutBackground;
+    });
+  }
 
   downloadButton.addEventListener('click', () => {
     downloadImage(image.src, getFileName(image.src));
