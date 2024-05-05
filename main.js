@@ -71,7 +71,6 @@ async function generateImage(data) {
     const jsonPath = imagePath.replace('.png', '.json');
     fs.writeFileSync(jsonPath, JSON.stringify(imageInfo, null, 2));
     data.backgroundRemovalSupported = backgroundRemovalSupported;
-    console.log('data.backgroundRemovalSupported', data.backgroundRemovalSupported);
     sendToRenderer('showImage', data);
   }
 }
