@@ -49,7 +49,7 @@ async function generateImage(data) {
       await ai.saveImage(params);
       break;
 
-    case 'stabilitydiffusion-3':
+    case 'stablediffusion-3':
       params.aspectRatio = data.aspectRatio;
       await stabilityAi.saveImage(params);
       break;
@@ -151,7 +151,7 @@ function getImagesPath() {
 
 async function rendererRequestsApiKeysStatus() {
   const data = {
-    "stabilitydiffusion-3": {
+    "stablediffusion-3": {
       exists: Boolean(process.env.STABILITY_API_KEY),
       name: "STABILITY_API_KEY",
       url: 'https://platform.openai.com/api-keys'

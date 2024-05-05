@@ -62,7 +62,7 @@ function submitPrompt() {
       data.style = document.querySelector('#style').value;
       data.quality = document.querySelector('#quality').value;
       break;
-    case 'stabilitydiffusion-3':
+    case 'stablediffusion-3':
       data.aspectRatio = document.querySelector('#aspect-ratio').value;
       break;
     default:
@@ -177,7 +177,7 @@ function downloadImage(imagePath, fileName) {
 function getModelTitle(model) {
   const titles = {
     'dall-e-3': 'Dall-E 3',
-    'stabilitydiffusion-3': 'Stability Diffusion 3'
+    'stablediffusion-3': 'Stable Diffusion 3'
   };
   return titles[model];
 }
