@@ -5,7 +5,7 @@ QuickImage lets you generate AI images using Stable Diffusion 3 and Dall-E 3. Yo
 
 To grab the Windows exe, click on Releases and download the zip.
 
-![image](https://github.com/JPhilipp/quickimage/assets/1754503/3a8e4843-4811-422b-8444-b0457732a447)
+![screenshot](https://github.com/JPhilipp/quickimage/assets/1754503/67aa7f9e-69f4-46ce-97fb-e481b0df8ef2)
 
 ![image](https://github.com/JPhilipp/quickimage/assets/1754503/5d20992e-cacf-4ea2-9696-1fd65142c125)
 
