@@ -195,3 +195,9 @@ body {
 .wiggle-animation {
   animation: wiggle 1s ease-in-out infinite;
 }
+
+.error {
+  color: red;
+  font-weight: bold;
+  height: 50px;
+}

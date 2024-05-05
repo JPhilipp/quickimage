@@ -12,7 +12,7 @@ export let apiKey = process.env.STABILITY_API_KEY;
 const statusComplete = 200;
 const statusStillRunning = 202;
 
-export async function saveImage({prompt = '', path = '', doRemoveBackground = false, doRemoveBackgroundInAddition = false, aspectRatio = '1:1', contextForErrorLogging = "Stability TextToImage"} = {}) {
+export async function saveImage({prompt = '', path = '', doRemoveBackground = false, doRemoveBackgroundInAddition = false, aspectRatio = '1:1', contextForErrorLogging = "Stability TextToImage", imageInfo = {error: null}} = {}) {
   // API Reference: https://platform.stability.ai/docs/api-reference#tag/Generate/paths/~1v2beta~1stable-image~1generate~1sd3/post
 
   let success = false;
@@ -42,6 +42,7 @@ export async function saveImage({prompt = '', path = '', doRemoveBackground = fa
   }
   catch (error) {
     await logError(error, `${contextForErrorLogging}. Prompt: ${prompt}`);
+    imageInfo.error = error;
   }
 
   if (response) {
@@ -73,10 +74,12 @@ export async function saveImage({prompt = '', path = '', doRemoveBackground = fa
       }
       else {
         console.log(`${contextForErrorLogging} issue, ${response.status}: ${response.data.toString()}`);
+        imageInfo.error = JSON.parse(response.data).errors[0];
       }
     }
     catch (error) {
       await logError(error, contextForErrorLogging);
+      imageInfo.error = error;
     }
   }
 

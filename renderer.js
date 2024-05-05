@@ -5,10 +5,11 @@ document.querySelector('#prompt-submit-button').addEventListener('click', () => 
 document.querySelector('#model').addEventListener('change', (event) => { modelChanged(event); });
 document.querySelector('#search').addEventListener('search', () => { search(); });
 
-window.electronAPI.receiveMessage('showImage', (data) => { showImage(data); });
+window.electronAPI.receiveMessage('showImage',                (data) => { showImage(data); });
+window.electronAPI.receiveMessage('showImageError',           (data) => { showImageError(data); });
 window.electronAPI.receiveMessage('showNoSearchResultsFound', (data) => { showNoSearchResultsFound(data); });
-window.electronAPI.receiveMessage('getApiKeysStatus', (data) => { getApiKeysStatus(data); });
-window.electronAPI.receiveMessage('showDebugInfo', (data) => { showDebugInfo(data); });
+window.electronAPI.receiveMessage('getApiKeysStatus',         (data) => { getApiKeysStatus(data); });
+window.electronAPI.receiveMessage('showDebugInfo',            (data) => { showDebugInfo(data); });
 
 window.onload = () => { start(); };
 let apiKeysStatus = {};
@@ -48,13 +49,11 @@ function submitPrompt() {
   const result = getCreateResultElement(id);
   result.classList.add('spinner');
 
-  let prompt = document.querySelector('#prompt').value.trim();
-  if (!prompt) {
-    prompt = 'a pink unicorn';
-    document.querySelector('#prompt').value = prompt;
-  }
-
-  const data = { id: id, prompt: prompt, model: model };
+  const data = {
+    id: id,
+    prompt: document.querySelector('#prompt').value.trim(),
+    model: model
+  };
 
   switch (data.model) {
     case 'dall-e-3':
@@ -132,6 +131,14 @@ function showImage(data) {
   downloadButton.addEventListener('click', () => {
     downloadImage(image.src, getFileName(image.src));
   });
+}
+
+function showImageError(data) {
+  removeElement('search-results-spinner');
+  const result = getCreateResultElement(data.id);
+  result.classList.remove('spinner');
+  result.classList.add('error');
+  result.innerText = data.error;
 }
 
 function showNoSearchResultsFound(data) {

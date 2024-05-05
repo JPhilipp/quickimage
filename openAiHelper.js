@@ -124,7 +124,7 @@ export async function getImageURL({prompt = '', style = 'vivid', quality = 'stan
   return imageUrl;
 }
 
-export async function saveImage({prompt = '', path = '', style = 'vivid', quality = 'standard', doRemoveBackground = false, doRemoveBackgroundInAddition = false, width = 1024, height = 1024, saveAsJpg = false, saveAsJpgInAddition = false, contextForErrorLogging = "Dall-E", model = "dall-e-3", imageInfo = {revisedPrompt: null, temporaryLiveUrl: null}} = {}) {
+export async function saveImage({prompt = '', path = '', style = 'vivid', quality = 'standard', doRemoveBackground = false, doRemoveBackgroundInAddition = false, width = 1024, height = 1024, saveAsJpg = false, saveAsJpgInAddition = false, contextForErrorLogging = "Dall-E", model = "dall-e-3", imageInfo = {revisedPrompt: null, temporaryLiveUrl: null, error: null}} = {}) {
   // API Reference: https://platform.openai.com/docs/api-reference/images/create
   
   let success;
@@ -141,6 +141,7 @@ export async function saveImage({prompt = '', path = '', style = 'vivid', qualit
   }
   catch (error) {
     await logError(error, contextForErrorLogging);
+    imageInfo.error = error;
     return;
   }
 

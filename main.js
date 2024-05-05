@@ -20,12 +20,13 @@ async function generateImage(data) {
   const imagePath = `${getImagesPath()}/${data.id}.png`;
   data.imagePath = imagePath;
 
-  const imageInfo = {
+  let imageInfo = {
     model: data.model,
-    prompt: data.prompt
+    prompt: data.prompt,
+    error: null
   };
 
-  const params = {
+  let params = {
     prompt: data.prompt,
     path: imagePath,
     doRemoveBackgroundInAddition: true,
@@ -33,26 +34,21 @@ async function generateImage(data) {
   };
 
   console.log(`Generating ${data.model} image: ${data.prompt}`);
-
   switch (data.model) {
     case 'dall-e-3':
-      if (process.env.OPENAI_API_KEY) {
-        const [width, height] = data.widthAndHeight.split('x');
-        params.width  = parseInt(width);
-        params.height = parseInt(height);
-        params.style = data.style;
-        params.quality = data.quality;
-        imageInfo.style = data.style;
-        imageInfo.quality = data.quality;
-        await ai.saveImage(params);
-      }
+      const [width, height] = data.widthAndHeight.split('x');
+      params.width  = parseInt(width);
+      params.height = parseInt(height);
+      params.style = data.style;
+      params.quality = data.quality;
+      imageInfo.style = data.style;
+      imageInfo.quality = data.quality;
+      await ai.saveImage(params);
       break;
 
     case 'stabilitydiffusion-3':
-      if (process.env.STABILITY_API_KEY) {
-        params.aspectRatio = data.aspectRatio;
-        await stabilityAi.saveImage(params);
-      }
+      params.aspectRatio = data.aspectRatio;
+      await stabilityAi.saveImage(params);
       break;
 
     default:
@@ -60,10 +56,17 @@ async function generateImage(data) {
       return;
   }
 
-  if (fs.existsSync(imagePath)) {
+  if (imageInfo.error) {
+    let error = String(imageInfo.error);
+    const prefix = 'Error: ';
+    if (!error.startsWith(prefix)) { error = prefix + error; }
+    data.error = error;
+
+    sendToRenderer('showImageError', data);
+  }
+  else {
     const jsonPath = imagePath.replace('.png', '.json');
     fs.writeFileSync(jsonPath, JSON.stringify(imageInfo, null, 2));
-  
     sendToRenderer('showImage', data);
   }
 }
@@ -104,7 +107,9 @@ async function getNewestJsons(max) {
     const json = JSON.parse(fileContents);
     
     json.id = path.basename(file, '.json');
-    json.imagePath = `${getImagesPath()}/${json.id}.png`;;
+    json.imagePath = `${getImagesPath()}/${json.id}.png`;
+    if (!fs.existsSync(json.imagePath)) { return; }
+
     return json;
   }));
 
