@@ -129,14 +129,17 @@ async function getSearchMatchingJsons(query) {
   const jsonFiles = files.filter(file => file.endsWith('.json'));
 
   const results = await Promise.all(jsonFiles.map(async (file) => {
+    const id = path.basename(file, '.json');
     const filePath = `${imagesPath}/${file}`;
+    const imageFileName = `${id}.png`;
+    const imagePath = `${imagesPath}/${imageFileName}`;
     const fileContents = await fs.promises.readFile(filePath, 'utf-8');
     const json = JSON.parse(fileContents);
-    
-    if (json.prompt && json.prompt.toLowerCase().includes(query)) {
-      json.id = path.basename(file, '.json');
-      json.imagePath = `${getImagesPath()}/${json.id}.png`;
-      if (!fs.existsSync(json.imagePath)) { return; }
+
+    if (imageFileName.includes(query) || (json.prompt && json.prompt.toLowerCase().includes(query))) {
+      if (!fs.existsSync(imagePath)) { return; }
+      json.id = id;
+      json.imagePath = imagePath;
       json.backgroundRemovalSupported = isDevEnvironment;
       return json;
     }
